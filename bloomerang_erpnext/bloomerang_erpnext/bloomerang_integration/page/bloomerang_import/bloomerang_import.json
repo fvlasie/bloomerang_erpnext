@@ -1,0 +1,17 @@
+{
+ "content_type": "HTML",
+ "creation": "2026-07-27 12:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Page",
+ "icon": "octicon octicon-sync",
+ "idx": 0,
+ "modified": "2026-07-27 12:00:00.000000",
+ "module": "Bloomerang Integration",
+ "name": "bloomerang-import",
+ "page_name": "bloomerang-import",
+ "roles": [
+  {"role": "System Manager"}
+ ],
+ "standard": "Yes",
+ "title": "Bloomerang Import"
+}
