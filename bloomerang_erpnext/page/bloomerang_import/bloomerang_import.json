@@ -7,8 +7,8 @@
  "idx": 0,
  "modified": "2026-07-27 12:00:00.000000",
  "module": "Bloomerang Integration",
- "name": "bloomerang-import",
- "page_name": "bloomerang-import",
+ "name": "bloomerang_import",
+ "page_name": "bloomerang_import",
  "roles": [
   {"role": "System Manager"}
  ],
