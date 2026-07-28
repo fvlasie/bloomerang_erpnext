@@ -21,6 +21,10 @@ function fetchBloomerangData() {
 
     frappe.call({
         method: 'bloomerang_erpnext.api.fetch_constituents',
+        error: function(r) {
+            let msg = r && r.message ? r.message : 'Invalid API credentials or network error. Please verify your Bloomerang Settings.';
+            $status.html(`<span class="text-danger">${msg}</span>`);
+        },
         callback: function(r) {
             if (!r.message || !r.message.Result) {
                 $status.html('<span class="text-danger">No data returned or invalid API credentials.</span>');
