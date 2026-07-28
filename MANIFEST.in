@@ -1,0 +1,16 @@
+include manifest.in
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include bloomerang_erpnext *.css
+recursive-include bloomerang_erpnext *.csv
+recursive-include bloomerang_erpnext *.html
+recursive-include bloomerang_erpnext *.ico
+recursive-include bloomerang_erpnext *.js
+recursive-include bloomerang_erpnext *.json
+recursive-include bloomerang_erpnext *.md
+recursive-include bloomerang_erpnext *.png
+recursive-include bloomerang_erpnext *.py
+recursive-include bloomerang_erpnext *.svg
+recursive-include bloomerang_erpnext *.txt
