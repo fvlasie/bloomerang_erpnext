@@ -26,6 +26,10 @@ function fetchBloomerangData() {
             $status.html(`<span class="text-danger">${msg}</span>`);
         },
         callback: function(r) {
+            if (r.error) {
+                $status.html(`<span class="text-danger">${r.error}</span>`);
+                return;
+            }
             if (!r.message || !r.message.Result) {
                 $status.html('<span class="text-danger">No data returned or invalid API credentials.</span>');
                 return;
