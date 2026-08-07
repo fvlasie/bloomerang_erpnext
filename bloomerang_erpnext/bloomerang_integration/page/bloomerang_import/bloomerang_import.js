@@ -26,8 +26,8 @@ function fetchBloomerangData() {
             $status.html(`<span class="text-danger">${msg}</span>`);
         },
         callback: function(r) {
-            if (r.error) {
-                $status.html(`<span class="text-danger">${r.error}</span>`);
+            if (r && r.message && r.message.error) {
+                $status.html(`<span class="text-danger">${r.message.error}</span>`);
                 return;
             }
             if (!r.message || !r.message.Result) {
