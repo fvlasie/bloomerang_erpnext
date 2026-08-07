@@ -22,21 +22,10 @@ function fetchBloomerangData() {
     frappe.call({
         method: 'bloomerang_erpnext.api.fetch_constituents',
         error: function(r) {
-            let msg = r && r.message ? r.message : 'Invalid API credentials or network error. Please verify your Bloomerang Settings.';
-            $status.html(`<span class="text-danger">${msg}</span>`);
+            $status.html(`<pre class="text-danger">${JSON.stringify(r, null, 2)}</pre>`);
         },
         callback: function(r) {
-            // r.message is the dict returned by the API
-            if (r.message && r.message.error) {
-                $status.html(`<span class="text-danger">${r.message.error}</span>`);
-                return;
-            }
-            if (!r.message || !r.message.Result) {
-                $status.html('<span class="text-danger">No data returned or invalid API credentials.</span>');
-                return;
-            }
-            $status.text('Loaded ' + r.message.Result.length + ' constituents.');
-            renderTable($container, r.message.Result);
+            $status.html(`<pre>${JSON.stringify(r, null, 2)}</pre>`);
         }
     });
 }
