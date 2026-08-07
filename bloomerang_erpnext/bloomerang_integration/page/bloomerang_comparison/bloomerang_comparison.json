@@ -1,0 +1,7 @@
+{
+ "name": "Bloomerang Comparison",
+ "module": "Bloomerang ERPNext",
+ "doctype": "Page",
+ "title": "Bloomerang Comparison",
+ "route": "bloomerang_comparison"
+}
