@@ -26,7 +26,8 @@ function fetchBloomerangData() {
             $status.html(`<span class="text-danger">${msg}</span>`);
         },
         callback: function(r) {
-            if (r && r.message && r.message.error) {
+            // r.message is the dict returned by the API
+            if (r.message && r.message.error) {
                 $status.html(`<span class="text-danger">${r.message.error}</span>`);
                 return;
             }
@@ -34,7 +35,6 @@ function fetchBloomerangData() {
                 $status.html('<span class="text-danger">No data returned or invalid API credentials.</span>');
                 return;
             }
-
             $status.text('Loaded ' + r.message.Result.length + ' constituents.');
             renderTable($container, r.message.Result);
         }
