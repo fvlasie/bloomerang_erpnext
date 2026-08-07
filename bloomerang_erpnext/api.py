@@ -31,4 +31,7 @@ def fetch_constituents(skip=0, take=20):
     elif response.status_code == 401:
         frappe.throw("Bloomerang API Error: 401 Unauthorized - Invalid or expired API Key. Please verify your API key in Bloomerang Settings.")
     else:
-        frappe.throw(f"Bloomerang API Error: {response.status_code} - {response.text}")
+        error_message = f"Bloomerang API Error: {response.status_code} - {response.text}"
+        if response.text:
+            error_message += f"\nResponse Body: {response.text}"
+        frappe.throw(error_message)
