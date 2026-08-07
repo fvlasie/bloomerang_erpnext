@@ -22,10 +22,21 @@ function fetchBloomerangData() {
     frappe.call({
         method: 'bloomerang_erpnext.api.fetch_constituents',
         error: function(r) {
-            $status.html(`<pre class="text-danger">${JSON.stringify(r, null, 2)}</pre>`);
+            $status.html(`<details><summary class="text-danger">View Raw Error</summary><pre class="text-danger">${JSON.stringify(r, null, 2)}</pre></details>`);
         },
         callback: function(r) {
-            $status.html(`<pre>${JSON.stringify(r, null, 2)}</pre>`);
+            if (r.message && r.message.error) {
+                $status.html(`<details><summary class="text-danger">View Raw Error</summary><pre class="text-danger">${JSON.stringify(r.message, null, 2)}</pre></details>`);
+                return;
+            }
+
+            if (!r.message || !r.message.Results) {
+                $status.html(`<details><summary class="text-danger">View Raw Error</summary><pre class="text-danger">No data returned or invalid API credentials. Full response: ${JSON.stringify(r, null, 2)}</pre></details>`);
+                return;
+            }
+
+            $status.html(`Loaded ${r.message.Results.length} constituents. <details><summary>View Raw Response</summary><pre>${JSON.stringify(r, null, 2)}</pre></details>`);
+            renderTable($container, r.message.Results);
         }
     });
 }
