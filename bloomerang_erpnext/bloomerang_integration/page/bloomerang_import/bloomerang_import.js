@@ -1,3 +1,5 @@
+frappe.provide('bloomerang_erpnext');
+
 frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 	let page = frappe.ui.make_app_page({
 		parent: wrapper,
@@ -5,10 +7,13 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 		single_column: true
 	});
 
-	// Render complete self-contained single-page dashboard app HTML into page.main directly
-	$(page.main).html(`
+	// Directly set innerHTML on wrapper or page.main container
+	let container = $(wrapper).find('.layout-main-section')[0] || page.main[0];
+	if (!container) return;
+
+	container.innerHTML = `
 		<div class="bloomerang-hub-app p-3">
-			<!-- Header / Nav Tabs -->
+			<!-- Header Nav Tabs -->
 			<ul class="nav nav-tabs mb-4" id="bloomerang-tabs" role="tablist">
 				<li class="nav-item">
 					<a class="nav-link active" id="tab-fetch-link" data-toggle="tab" href="#tab-fetch" role="tab">1. Fetch & Stage</a>
@@ -109,7 +114,7 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 				border-bottom: 1px solid #f0f0f0;
 			}
 		</style>
-	`);
+	`;
 
 	// Attach Page Header Primary Action
 	page.set_primary_action('Fetch Constituents', function() {
@@ -117,18 +122,18 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 	}, 'octicon octicon-sync');
 
 	// Tab switching event handlers
-	$(page.main).find('#bloomerang-tabs a').on('click', function (e) {
+	$(container).find('#bloomerang-tabs a').on('click', function (e) {
 		e.preventDefault();
 		$(this).tab('show');
 	});
 
 	// Fetch constituents handler
-	$(page.main).find('#btn-fetch-constituents').on('click', function() {
+	$(container).find('#btn-fetch-constituents').on('click', function() {
 		fetchBloomerangData(page);
 	});
 
 	// Initialize search and comparison handlers
-	initComparisonHandlers(page);
+	initComparisonHandlers(page, container);
 };
 
 function fetchBloomerangData(page) {
@@ -188,8 +193,8 @@ function renderTable($container, items) {
 	`);
 }
 
-function initComparisonHandlers(page) {
-	let $main = $(page.main);
+function initComparisonHandlers(page, container) {
+	let $main = $(container);
 	let $matchList = $main.find('#match-list');
 	let $comparisonPane = $main.find('#comparison-pane');
 	let $emptyState = $main.find('#empty-state');
