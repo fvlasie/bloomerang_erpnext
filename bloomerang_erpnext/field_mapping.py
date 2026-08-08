@@ -1,5 +1,5 @@
 import frappe
-from fralude import JSON
+import json
 
 # This is a placeholder for the field mapping configuration.
 # In a real implementation, this would be stored in a DocType.
