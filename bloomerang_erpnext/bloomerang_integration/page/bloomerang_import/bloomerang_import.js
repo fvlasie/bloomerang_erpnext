@@ -5,11 +5,31 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
         single_column: true
     });
 
-    $(frappe.render_template('bloomerang_import', {})).appendTo(page.main);
+    // Render page body directly
+    $(page.main).html(`
+        <div class="nav nav-tabs mb-4" style="border-bottom: 1px solid #d1d8dd;">
+            <a class="nav-link active" href="#" onclick="frappe.set_route('bloomerang_import'); return false;">1. Fetch & Stage</a>
+            <a class="nav-link" href="#" onclick="frappe.set_route('bloomerang_comparison'); return false;">2. Compare & Merge</a>
+        </div>
+        <div class="frappe-card p-4 my-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="m-0">Constituent Records</h5>
+                <button id="btn-fetch-constituents-body" class="btn btn-primary btn-sm">
+                    <i class="octicon octicon-sync me-1"></i> Fetch Constituents
+                </button>
+            </div>
+            <div id="bloomerang-status" class="text-muted">Click "Fetch Constituents" to load records from Bloomerang.</div>
+            <div id="bloomerang-table-container" class="mt-3"></div>
+        </div>
+    `);
 
     page.set_primary_action('Fetch Constituents', function() {
         fetchBloomerangData();
     }, 'octicon octicon-sync');
+
+    $(page.main).find('#btn-fetch-constituents-body').on('click', function() {
+        fetchBloomerangData();
+    });
 };
 
 function fetchBloomerangData() {

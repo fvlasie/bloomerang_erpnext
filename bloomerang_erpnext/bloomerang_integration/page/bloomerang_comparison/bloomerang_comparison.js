@@ -5,7 +5,67 @@ frappe.pages['bloomerang_comparison'].on_page_load = function(wrapper) {
         single_column: true
     });
 
-    $(frappe.render_template('bloomerang_comparison', {})).appendTo(page.main);
+    $(page.main).html(`
+        <div class="nav nav-tabs mb-4" style="border-bottom: 1px solid #d1d8dd;">
+            <a class="nav-link" href="#" onclick="frappe.set_route('bloomerang_import'); return false;">1. Fetch & Stage</a>
+            <a class="nav-link active" href="#" onclick="frappe.set_route('bloomerang_comparison'); return false;">2. Compare & Merge</a>
+        </div>
+        <div class="bloomerang-comparison-container">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h4 class="page-title">Bloomerang vs ERPNext Comparison</h4>
+                    <div class="row align-items-end mt-3">
+                        <div class="col-md-6">
+                            <label for="constituent-select">Select Bloomerang Constituent to Compare:</label>
+                            <div class="input-group">
+                                <input type="text" id="constituent-select" class="form-control" placeholder="Search by ID or Name...">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" id="btn-search-constituent">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">Potential Matches</div>
+                        <div class="card-body">
+                            <div id="match-list" class="list-group">
+                                <p class="text-muted">No matches selected.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div id="comparison-pane" class="card" style="display: none;">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Comparison View</span>
+                            <button id="btn-merge" class="btn btn-primary btn-sm">Execute Merge</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5 class="text-primary">Bloomerang</h5>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="text-success">ERPNext</h5>
+                                </div>
+                            </div>
+                            <hr>
+                            <div id="comparison-fields"></div>
+                        </div>
+                    </div>
+                    <div id="empty-state" class="text-center mt-5">
+                        <i class="fa fa-exchange text-muted" style="font-size: 48px;"></i>
+                        <p class="text-muted mt-2">Select a match from the left to begin comparison.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
 
     init_comparison_page(page);
 };
