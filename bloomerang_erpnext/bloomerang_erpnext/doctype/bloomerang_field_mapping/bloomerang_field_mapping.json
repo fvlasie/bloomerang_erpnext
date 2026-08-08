@@ -1,0 +1,35 @@
+{
+ "name": "Bloomerang Field Mapping",
+ "module": "Bloomerang ERPNext",
+ "doctype": "DocType",
+ "fields": [
+  {
+   "fieldname": "bloomerang_field",
+   "fieldtype": "Data",
+   "label": "Bloomerang Field Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "erpnext_field",
+   "fieldtype": "Data",
+   "label": "ERPNext Field Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_doctype",
+   "fieldtype": "Link",
+   "label": "Target DocType",
+   "options": "DocType",
+   "reqd": 1
+  }
+ ],
+ "permissions": [
+  {
+   "user": "Administrator",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ]
+}

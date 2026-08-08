@@ -1,0 +1,33 @@
+{
+ "name": "Bloomerang Settings",
+ "module": "Bloomerang ERPNext",
+ "doctype": "DocType",
+ "fields": [
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "Bloomerang API Key",
+   "reqd": 1
+  },
+  {
+   "fieldname": "api_secret",
+   "fieldtype": "Password",
+   "label": "Bloomerang API Secret"
+  },
+  {
+   "fieldname": "field_mapping",
+   "fieldtype": "Table",
+   "label": "Field Mapping",
+   "options": "Bloomerang Field Mapping"
+  }
+ ],
+ "permissions": [
+  {
+   "user": "Administrator",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ]
+}
