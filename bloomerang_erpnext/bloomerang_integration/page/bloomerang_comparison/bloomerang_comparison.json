@@ -1,7 +1,17 @@
 {
- "name": "Bloomerang Comparison",
- "module": "Bloomerang ERPNext",
+ "content_type": "HTML",
+ "creation": "2026-07-27 12:00:00.000000",
+ "docstatus": 0,
  "doctype": "Page",
- "title": "Bloomerang Comparison",
- "route": "bloomerang_comparison"
+ "icon": "octicon octicon-git-compare",
+ "idx": 0,
+ "modified": "2026-07-27 12:00:00.000000",
+ "module": "Bloomerang Integration",
+ "name": "bloomerang_comparison",
+ "page_name": "bloomerang_comparison",
+ "roles": [
+  {"role": "System Manager"}
+ ],
+ "standard": "Yes",
+ "title": "Bloomerang Comparison"
 }
