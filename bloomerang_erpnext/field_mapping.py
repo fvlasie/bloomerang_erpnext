@@ -12,6 +12,8 @@ FIELD_MAPPING = {
         "PrimaryEmail": "email_id",
         "PrimaryPhone": "phone",
         "Type": "type",
+    }
+}
 
 def validate_mapping(field_name, source, target):
     """

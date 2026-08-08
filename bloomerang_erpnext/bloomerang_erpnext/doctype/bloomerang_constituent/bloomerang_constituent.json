@@ -1,22 +1,39 @@
 {
- "name": "Bloomerang Constituent",
- "module": "Bloomerang ERPNext",
+ "actions": [],
+ "autoname": "field:bloomerang_id",
+ "creation": "2024-01-01 00:00:00.000000",
  "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "bloomerang_id",
+  "first_name",
+  "last_name",
+  "full_name",
+  "email_id",
+  "phone",
+  "type",
+  "status",
+  "raw_data"
+ ],
  "fields": [
   {
    "fieldname": "bloomerang_id",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Bloomerang ID",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "first_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "First Name"
   },
   {
    "fieldname": "last_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Last Name"
   },
   {
@@ -27,18 +44,20 @@
   {
    "fieldname": "email_id",
    "fieldtype": "Data",
-   "label": "Email ID"
+   "label": "Email ID",
+   "options": "Email"
   },
   {
    "fieldname": "phone",
    "fieldtype": "Data",
-   "label": "Phone"
+   "label": "Phone",
+   "options": "Phone"
   },
   {
    "fieldname": "type",
    "fieldtype": "Select",
    "label": "Type",
-   "options": "Individual\nOrganization"
+   "options": "\nIndividual\nOrganization"
   },
   {
    "fieldname": "status",
@@ -47,17 +66,32 @@
   },
   {
    "fieldname": "raw_data",
-   "fieldtype": "Text",
-   "label": "Raw JSON Data"
+   "fieldtype": "Code",
+   "label": "Raw JSON Data",
+   "options": "JSON"
   }
  ],
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bloomerang ERPNext",
+ "name": "Bloomerang Constituent",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
  "permissions": [
   {
-   "user": "Administrator",
-   "read": 1,
-   "write": 1,
    "create": 1,
-   "delete": 1
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
   }
- ]
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC"
 }

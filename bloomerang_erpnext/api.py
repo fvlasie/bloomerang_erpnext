@@ -117,82 +117,7 @@ def sync_constituents(skip=0, take=50):
 
 
 @frappe.whitelist()
-def dry_run_match(bloomerang_constituent_id):
-    """
-    Performs a dry run of the matching engine.
-    It finds potential matches and, for each match, calculates the proposed field updates
-    based on the field mapping, without actually saving anything to the database.
-    """
-    from bloomerang_erpnext.field_mapping import match_record
-    
-    matches_result = find_potential_matches(bloomerang_constituent_id)
-    matches = matches_result.get("matches", [])
-    
-    if not matches:
-        return {"message": "No matches found for dry run.", "matches": []}
-
-    # Get the constituent record to have the source data
-    constituent = None
-    try:
-        if frappe.db.exists("Bloomerang Constituent", bloomerang_constituent_id):
-            constituent = frappe.get_doc("Bloomerang Constituent", bloomerang_constituent_id)
-    except Exception:
-        pass
-
-    if not constituent:
-        return {"error": "Could not find Bloomerang Constituent record for dry run."}
-
-    # Parse the raw data to get the actual Bloomerang record dictionary
-    try:
-        bloomerang_record = json.loads(constituent.raw_data)
-    except Exception:
-        return {"error": "Could not parse raw data from Bloomerang Constituent."}
-
-    # Identify which fields should be updated based on the mapping
-    # match_record returns a list of target field names that have a source match
-    target_fields = match_record(bloomerang_record)
-
-    dry_run_matches = []
-    for match in matches:
-        erpnext_id = match["erpnext_id"]
-        erpnext_data = match["erpnext_data"]
-        
-        proposed_updates = {}
-        for field in target_fields:
-            # Find the source field name for this target field
-            # We need to reverse lookup the mapping: target -> source
-            mapping = FIELD_MAPPING["bloomerang_to_erpnext"]
-            source_field = None
-            for src, tgt in mapping.items():
-                if tgt == field:
-                    source_field = src
-                    break
-            
-            if source_field and source_field in bloomerang_record:
-                val = bloomerang_record[source_field]
-                # If it's a dict (like email/phone), we might need more specific handling, 
-                # but for this dry run, we'll just take the value if it's simple.
-                # In a real scenario, we'd handle the nested structure.
-                if not isinstance(val, dict):
-                    proposed_updates[field] = val
-                else:
-                    # Basic attempt to handle common nested structures seen in Bloomerang
-                    # This is a simplified approach for the dry run.
-                    if field == "email_id" and "PrimaryEmail" in bloomerang_record:
-                        proposed_updates[field] = bloomerang_record["PrimaryEmail"].get("Value")
-                    elif field == "phone" and "PrimaryPhone" in bloomerang_record:
-                        proposed_updates[field] = bloomerang_record["PrimaryPhone"].get("Number")
-
-        dry_run_matches.append({
-            "erpnext_id": erpnext_id,
-            "type": match["type"],
-            "proposed_updates": proposed_updates
-        })
-
-    return {
-        "message": "Dry run completed successfully.",
-        "matches": dry_run_matches
-    }
+def find_potential_matches(bloomerang_constituent_id):
     """
     Finds potential matches in ERPNext for a given Bloomerang constituent ID or query.
     """
@@ -246,6 +171,85 @@ def dry_run_match(bloomerang_constituent_id):
 
     return {
         "matches": matches
+    }
+
+
+@frappe.whitelist()
+def dry_run_match(bloomerang_constituent_id):
+    """
+    Performs a dry run of the matching engine.
+    It finds potential matches and, for each match, calculates the proposed field updates
+    based on the field mapping, without actually saving anything to the database.
+    """
+    from bloomerang_erpnext.field_mapping import match_record
+
+    matches_result = find_potential_matches(bloomerang_constituent_id)
+    matches = matches_result.get("matches", [])
+
+    if not matches:
+        return {"message": "No matches found for dry run.", "matches": []}
+
+    # Get the constituent record to have the source data
+    constituent = None
+    try:
+        if frappe.db.exists("Bloomerang Constituent", bloomerang_constituent_id):
+            constituent = frappe.get_doc("Bloomerang Constituent", bloomerang_constituent_id)
+    except Exception:
+        pass
+
+    if not constituent:
+        return {"error": "Could not find Bloomerang Constituent record for dry run."}
+
+    # Parse the raw data to get the actual Bloomerang record dictionary
+    try:
+        bloomerang_record = json.loads(constituent.raw_data)
+    except Exception:
+        return {"error": "Could not parse raw data from Bloomerang Constituent."}
+
+    # Identify which fields should be updated based on the mapping
+    # match_record returns a list of target field names that have a source match
+    target_fields = match_record(bloomerang_record)
+
+    dry_run_matches = []
+    for match in matches:
+        erpnext_id = match["erpnext_id"]
+        erpnext_data = match["erpnext_data"]
+
+        proposed_updates = {}
+        for field in target_fields:
+            # Find the source field name for this target field
+            # We need to reverse lookup the mapping: target -> source
+            mapping = FIELD_MAPPING["bloomerang_to_erpnext"]
+            source_field = None
+            for src, tgt in mapping.items():
+                if tgt == field:
+                    source_field = src
+                    break
+
+            if source_field and source_field in bloomerang_record:
+                val = bloomerang_record[source_field]
+                # If it's a dict (like email/phone), we might need more specific handling,
+                # but for this dry run, we'll just take the value if it's simple.
+                # In a real scenario, we'd handle the nested structure.
+                if not isinstance(val, dict):
+                    proposed_updates[field] = val
+                else:
+                    # Basic attempt to handle common nested structures seen in Bloomerang
+                    # This is a simplified approach for the dry run.
+                    if field == "email_id" and "PrimaryEmail" in bloomerang_record:
+                        proposed_updates[field] = bloomerang_record["PrimaryEmail"].get("Value")
+                    elif field == "phone" and "PrimaryPhone" in bloomerang_record:
+                        proposed_updates[field] = bloomerang_record["PrimaryPhone"].get("Number")
+
+        dry_run_matches.append({
+            "erpnext_id": erpnext_id,
+            "type": match["type"],
+            "proposed_updates": proposed_updates
+        })
+
+    return {
+        "message": "Dry run completed successfully.",
+        "matches": dry_run_matches
     }
 
 @frappe.whitelist()

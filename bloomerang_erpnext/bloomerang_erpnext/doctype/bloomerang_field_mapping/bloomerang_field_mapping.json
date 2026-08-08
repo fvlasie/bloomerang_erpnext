@@ -1,35 +1,45 @@
 {
- "name": "Bloomerang Field Mapping",
- "module": "Bloomerang ERPNext",
+ "actions": [],
+ "creation": "2024-01-01 00:00:00.000000",
  "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "bloomerang_field",
+  "erpnext_field",
+  "target_doctype"
+ ],
  "fields": [
   {
    "fieldname": "bloomerang_field",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Bloomerang Field Name",
    "reqd": 1
   },
   {
    "fieldname": "erpnext_field",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "ERPNext Field Name",
    "reqd": 1
   },
   {
    "fieldname": "target_doctype",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Target DocType",
    "options": "DocType",
    "reqd": 1
   }
  ],
- "permissions": [
-  {
-   "user": "Administrator",
-   "read": 1,
-   "write": 1,
-   "create": 1,
-   "delete": 1
-  }
- ]
+ "istable": 1,
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bloomerang ERPNext",
+ "name": "Bloomerang Field Mapping",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC"
 }
