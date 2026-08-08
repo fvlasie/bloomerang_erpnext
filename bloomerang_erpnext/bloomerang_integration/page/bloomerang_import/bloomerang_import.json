@@ -1,5 +1,5 @@
 {
- "content_type": "JS",
+ "content_type": "HTML",
  "creation": "2026-07-27 12:00:00.000000",
  "docstatus": 0,
  "doctype": "Page",
@@ -9,9 +9,7 @@
  "module": "Bloomerang Integration",
  "name": "bloomerang_import",
  "page_name": "bloomerang_import",
- "roles": [
-  {"role": "System Manager"}
- ],
+ "roles": [],
  "standard": "Yes",
- "title": "Bloomerang Hub"
+ "title": "Bloomerang Import"
 }

@@ -9,9 +9,7 @@
  "module": "Bloomerang Integration",
  "name": "bloomerang_comparison",
  "page_name": "bloomerang_comparison",
- "roles": [
-  {"role": "System Manager"}
- ],
+ "roles": [],
  "standard": "Yes",
  "title": "Bloomerang Comparison"
 }

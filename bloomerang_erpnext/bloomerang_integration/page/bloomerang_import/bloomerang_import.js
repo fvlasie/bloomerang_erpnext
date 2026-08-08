@@ -1,7 +1,7 @@
 frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 	let page = frappe.ui.make_app_page({
 		parent: wrapper,
-		title: __('Bloomerang ERPNext Hub'),
+		title: 'Bloomerang Integration',
 		single_column: true
 	});
 
@@ -9,7 +9,7 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 	$(page.main).html(`
 		<div class="bloomerang-hub-app p-3">
 			<!-- Header / Nav Tabs -->
-			<ul class="nav nav-pills mb-4" id="bloomerang-tabs" role="tablist">
+			<ul class="nav nav-tabs mb-4" id="bloomerang-tabs" role="tablist">
 				<li class="nav-item">
 					<a class="nav-link active" id="tab-fetch-link" data-toggle="tab" href="#tab-fetch" role="tab">1. Fetch & Stage</a>
 				</li>
@@ -112,9 +112,9 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 	`);
 
 	// Attach Page Header Primary Action
-	page.set_primary_action(__('Fetch Constituents'), function() {
+	page.set_primary_action('Fetch Constituents', function() {
 		fetchBloomerangData(page);
-	}, 'sync');
+	}, 'octicon octicon-sync');
 
 	// Tab switching event handlers
 	$(page.main).find('#bloomerang-tabs a').on('click', function (e) {
@@ -136,7 +136,7 @@ function fetchBloomerangData(page) {
 	let $status = $main.find('#bloomerang-status');
 	let $container = $main.find('#bloomerang-table-container');
 
-	$status.text(__('Fetching records from Bloomerang...'));
+	$status.text('Fetching records from Bloomerang...');
 	$container.empty();
 
 	frappe.call({
@@ -201,7 +201,7 @@ function initComparisonHandlers(page) {
 	$btnSearch.on('click', function() {
 		let val = $searchInput.val().trim();
 		if (!val) {
-			frappe.msgprint(__('Please enter a Bloomerang ID or Name to search.'));
+			frappe.msgprint('Please enter a Bloomerang ID or Name to search.');
 			return;
 		}
 
@@ -277,7 +277,7 @@ function initComparisonHandlers(page) {
 	$btnMerge.on('click', function() {
 		const activeMatch = $main.find('.match-item.active').first();
 		if (!activeMatch.length) {
-			frappe.msgprint(__('Please select a match to merge.'));
+			frappe.msgprint('Please select a match to merge.');
 			return;
 		}
 

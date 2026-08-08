@@ -6,4 +6,6 @@ app_email = "your.email@example.com"
 app_license = "mit"
 
 # Include custom JS in desk assets bundle
-app_include_js = "/assets/bloomerang_erpnext/js/bloomerang_erpnext.js"
+app_include_js = [
+	"/assets/bloomerang_erpnext/js/bloomerang_erpnext.js"
+]
