@@ -46,52 +46,60 @@ def fetch_constituents(skip=0, take=20):
                 error_message += f"\nResponse Body: {response.text}"
             return {"error": error_message}
     except Exception as e:
-        # Catch any unexpected exceptions and return them as a structured error
         return {"error": f"An unexpected error occurred: {str(e)}"}
 
 @frappe.whitelist()
 def find_potential_matches(bloomerang_constituent_id):
     """
-    Finds potential matches in ERPNext for a given Bloomerang constituent.
+    Finds potential matches in ERPNext for a given Bloomerang constituent ID or query.
     """
-    # 1. Fetch the Bloomerang constituent from staging
-    constituent = frappe.get_doc("Bloomerang Constituent", bloomerang_constituent_id)
-    
     matches = []
+    constituent = None
 
-    # 2. Exact Match by Email
-    if constituent.email_id:
-        erpnext_contact = frappe.db.get_value("Contact", {"email_id": constituent.email_id}, ["name", "full_name", "email_id", "phone"], as_dict=True)
-        if erpnext_contact:
+    # Check staging doctype first if exists
+    try:
+        if frappe.db.exists("Bloomerang Constituent", bloomerang_constituent_id):
+            constituent = frappe.get_doc("Bloomerang Constituent", bloomerang_constituent_id)
+    except Exception:
+        pass
+
+    email = constituent.email_id if constituent else (bloomerang_constituent_id if "@" in bloomerang_constituent_id else None)
+    phone = constituent.phone if constituent else None
+    name_query = constituent.full_name if constituent else bloomerang_constituent_id
+
+    # 1. Exact Match by Email
+    if email:
+        erpnext_contacts = frappe.db.get_all("Contact", filters={"email_id": email}, fields=["name", "full_name", "email_id", "phone"])
+        for erpnext_contact in erpnext_contacts:
             matches.append({
                 "type": "Exact Match (Email)",
                 "erpnext_id": erpnext_contact.name,
                 "bloomerang_data": {
-                    "full_name": constituent.full_name,
-                    "email_id": constituent.email_id,
-                    "phone": constituent.phone
+                    "full_name": constituent.full_name if constituent else bloomerang_constituent_id,
+                    "email_id": email,
+                    "phone": phone or "-"
                 },
-                "erpnext_data": erpnext_contact
+                "erpnext_data": erpnext_contact,
+                "details": erpnext_contact
             })
 
-    # 3. Exact Match by Phone
-    if constituent.phone:
-        erpnext_contact = frappe.db.get_value("Contact", {"phone": constituent.phone}, ["name", "full_name", "email_id", "phone"], as_dict=True)
-        if erpnext_contact:
-            matches.append({
-                "type": "Exact Match (Phone)",
-                "erpnext_id": erpnext_contact.name,
-                "bloomerang_data": {
-                    "full_name": constituent.full_name,
-                    "email_id": constituent.email_id,
-                    "phone": constituent.phone
-                },
-                "erpnext_data": erpnext_contact
-            })
-
-    # 4. Placeholder for Fuzzy LLM Match
-    # In a real implementation, this would call an LLM service to compare names
-    # matches.extend(perform_llm_fuzzy_match(constituent))
+    # 2. Match by Name / ID search
+    if name_query:
+        erpnext_contacts = frappe.db.get_all("Contact", filters=[["full_name", "like", f"%{name_query}%"]], fields=["name", "full_name", "email_id", "phone"], limit=10)
+        existing_ids = {m["erpnext_id"] for m in matches}
+        for erpnext_contact in erpnext_contacts:
+            if erpnext_contact.name not in existing_ids:
+                matches.append({
+                    "type": "Name Match",
+                    "erpnext_id": erpnext_contact.name,
+                    "bloomerang_data": {
+                        "full_name": constituent.full_name if constituent else name_query,
+                        "email_id": email or "-",
+                        "phone": phone or "-"
+                    },
+                    "erpnext_data": erpnext_contact,
+                    "details": erpnext_contact
+                })
 
     return {
         "matches": matches
@@ -106,7 +114,7 @@ def execute_merge(erpnext_id, updated_values):
         doc = frappe.get_doc("Contact", erpnext_id)
         
         for field, value in updated_values.items():
-            if hasattr(doc, field):
+            if hasattr(doc, field) and value != "-":
                 setattr(doc, field, value)
         
         doc.save()
@@ -121,7 +129,6 @@ def stage_constituents(skip=0, take=100):
     """
     Fetches constituents from Bloomerang and stages them in the Bloomerang Constituent DocType.
     """
-    # 1. Fetch from Bloomerang
     data = fetch_constituents(skip=skip, take=take)
     if data.get("error"):
         return data
@@ -138,9 +145,7 @@ def stage_constituents(skip=0, take=100):
         if not bloomerang_id:
             continue
 
-        # Check if exists
         existing = frappe.db.get_value("Bloomerang Constituent", {"bloomerang_id": bloomerang_id}, "name", as_dict=True)
-        
         doc = frappe.get_doc("Bloomerang Constituent", existing["name"]) if existing else frappe.new_doc("Bloomerang Constituent")
         
         doc.bloomerang_id = bloomerang_id

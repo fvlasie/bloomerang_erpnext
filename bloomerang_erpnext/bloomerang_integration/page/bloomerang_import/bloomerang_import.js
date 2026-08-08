@@ -7,7 +7,6 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 		single_column: true
 	});
 
-	// Directly set innerHTML on wrapper or page.main container
 	let container = $(wrapper).find('.layout-main-section')[0] || page.main[0];
 	if (!container) return;
 
@@ -16,17 +15,17 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 			<!-- Header Nav Tabs -->
 			<ul class="nav nav-tabs mb-4" id="bloomerang-tabs" role="tablist">
 				<li class="nav-item">
-					<a class="nav-link active" id="tab-fetch-link" data-toggle="tab" href="#tab-fetch" role="tab">1. Fetch & Stage</a>
+					<button class="nav-link active" id="btn-tab-fetch" type="button">1. Fetch & Stage</button>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" id="tab-compare-link" data-toggle="tab" href="#tab-compare" role="tab">2. Compare & Merge Records</a>
+					<button class="nav-link" id="btn-tab-compare" type="button">2. Compare & Merge Records</button>
 				</li>
 			</ul>
 
 			<!-- Tab Content Containers -->
-			<div class="tab-content" id="bloomerang-tab-content">
+			<div id="bloomerang-tab-content">
 				<!-- TAB 1: Fetch & Stage -->
-				<div class="tab-pane fade show active" id="tab-fetch" role="tabpanel">
+				<div id="tab-fetch-pane">
 					<div class="card p-4">
 						<div class="d-flex justify-content-between align-items-center mb-3">
 							<h5 class="m-0 font-weight-bold">Bloomerang Data Import</h5>
@@ -40,7 +39,7 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 				</div>
 
 				<!-- TAB 2: Compare & Merge -->
-				<div class="tab-pane fade" id="tab-compare" role="tabpanel">
+				<div id="tab-compare-pane" style="display: none;">
 					<div class="row">
 						<div class="col-md-4">
 							<div class="card">
@@ -118,31 +117,41 @@ frappe.pages['bloomerang_import'].on_page_load = function(wrapper) {
 
 	// Attach Page Header Primary Action
 	page.set_primary_action('Fetch Constituents', function() {
-		fetchBloomerangData(page);
+		fetchBloomerangData(container);
 	}, 'octicon octicon-sync');
 
-	// Tab switching event handlers
-	$(container).find('#bloomerang-tabs a').on('click', function (e) {
-		e.preventDefault();
-		$(this).tab('show');
+	// Pure JavaScript tab switching (No href/hash route interception)
+	let $container = $(container);
+	$container.find('#btn-tab-fetch').on('click', function() {
+		$container.find('.nav-link').removeClass('active');
+		$(this).addClass('active');
+		$container.find('#tab-fetch-pane').show();
+		$container.find('#tab-compare-pane').hide();
+	});
+
+	$container.find('#btn-tab-compare').on('click', function() {
+		$container.find('.nav-link').removeClass('active');
+		$(this).addClass('active');
+		$container.find('#tab-fetch-pane').hide();
+		$container.find('#tab-compare-pane').show();
 	});
 
 	// Fetch constituents handler
-	$(container).find('#btn-fetch-constituents').on('click', function() {
-		fetchBloomerangData(page);
+	$container.find('#btn-fetch-constituents').on('click', function() {
+		fetchBloomerangData(container);
 	});
 
 	// Initialize search and comparison handlers
-	initComparisonHandlers(page, container);
+	initComparisonHandlers(container);
 };
 
-function fetchBloomerangData(page) {
-	let $main = $(page.main);
+function fetchBloomerangData(container) {
+	let $main = $(container);
 	let $status = $main.find('#bloomerang-status');
-	let $container = $main.find('#bloomerang-table-container');
+	let $tableContainer = $main.find('#bloomerang-table-container');
 
 	$status.text('Fetching records from Bloomerang...');
-	$container.empty();
+	$tableContainer.empty();
 
 	frappe.call({
 		method: 'bloomerang_erpnext.api.fetch_constituents',
@@ -161,7 +170,7 @@ function fetchBloomerangData(page) {
 			}
 
 			$status.html(`Loaded ${r.message.Results.length} constituents. <details><summary>View Raw Response</summary><pre>${JSON.stringify(r, null, 2)}</pre></details>`);
-			renderTable($container, r.message.Results);
+			renderTable($tableContainer, r.message.Results);
 		}
 	});
 }
@@ -193,7 +202,7 @@ function renderTable($container, items) {
 	`);
 }
 
-function initComparisonHandlers(page, container) {
+function initComparisonHandlers(container) {
 	let $main = $(container);
 	let $matchList = $main.find('#match-list');
 	let $comparisonPane = $main.find('#comparison-pane');
